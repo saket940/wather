@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather API App</title>
+  <style>
+  body {
+  font-family: sans-serif;
+  background: linear-gradient(to right, #6dd5ed, #2193b0);
+  color: white;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.weather-box {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 15px;
+  display: inline-block;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+input, button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px;
+}
+</style>
+</head>
+<body>
+  <div class="weather-box">
+    <h1>Weather Info</h1>
+    <input type="text" id="city" placeholder="Enter city">
+    <button onclick="getWeather()">Search</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const apiKey = '81602e0fa25d4bcd949151553252307'; // 🔁 Replace with your actual API key
+
+function getWeather() {
+  const city = document.getElementById('city').value;
+  const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById('result').innerHTML = `<p>City not found!</p>`;
+        return;
+      }
+
+      const result = `
+        <h2>${data.location.name}, ${data.location.country}</h2>
+        <img src="https:${data.current.condition.icon}" alt="${data.current.condition.text}">
+        <p>🌡 Temperature: ${data.current.temp_c} °C</p>
+        <p>🌤 Condition: ${data.current.condition.text}</p>
+        <p>💨 Wind: ${data.current.wind_kph} kph</p>
+        <p>🕒 Local Time: ${data.location.localtime}</p>
+      `;
+      document.getElementById('result').innerHTML = result;
+    })
+    .catch(error => {
+      console.error('API error:', error);
+      document.getElementById('result').innerHTML = `<p>Error loading data.</p>`;
+    });
+}
+
+  </script>
+</body>
+</html>
